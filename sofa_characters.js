@@ -28,11 +28,12 @@ window.renderSofaCharacters = function(playersList, activePlayerId = null) {
       personDiv.style.zIndex = '10';
     }
 
-    // Burbuja con Nombre y Rol
+    // Burbuja con Nombre, Rol y Ruta de Maestría
     const bubble = document.createElement('div');
     bubble.className = 'person-name-bubble';
     const title = player.roleTitle || getRoleTitleDefault(player.role);
-    bubble.textContent = `${title}: ${player.name}`;
+    const badge = player.masteryBadge ? ` (${player.masteryBadge})` : '';
+    bubble.textContent = `${title}: ${player.name}${badge}`;
     if (isActive) {
       bubble.style.background = '#fde047';
       bubble.style.color = '#0f172a';

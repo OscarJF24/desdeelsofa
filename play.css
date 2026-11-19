@@ -336,15 +336,116 @@ body.mobile-body {
   filter: brightness(1.25);
 }
 
-.pad-0 { background: var(--pad-0); }
-.pad-1 { background: var(--pad-1); }
-.pad-2 { background: var(--pad-2); }
-.pad-3 { background: var(--pad-3); }
-
-.pad-shape {
-  font-size: 2.8rem;
+.pad-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', cursive;
+  font-size: 1.8rem;
   font-weight: 900;
-  line-height: 1;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.pad-0 { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border: 1px solid rgba(253, 224, 71, 0.35); }
+.pad-1 { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); border: 1px solid rgba(251, 146, 60, 0.35); }
+.pad-2 { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: 1px solid rgba(56, 189, 248, 0.35); }
+.pad-3 { background: linear-gradient(135deg, #059669 0%, #047857 100%); border: 1px solid rgba(52, 211, 153, 0.35); }
+
+/* RUTA DE MAESTRÍA FAMILIAR */
+.mastery-box {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin: 16px 0 14px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.mastery-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fde047;
+  margin-bottom: 10px;
+}
+
+.mastery-steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.mastery-step {
+  flex: 1;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.2s;
+}
+
+.mastery-step.active {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.2);
+  transform: scale(1.04);
+}
+
+.m-step-icon {
+  font-size: 1.4rem;
+}
+
+.m-step-text {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.m-step-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.mastery-step.active .m-step-badge {
+  color: #fde047;
+}
+
+.m-arrow {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.btn-change-room {
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+
+.btn-change-room:active {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #fca5a5;
 }
 
 .pad-text {

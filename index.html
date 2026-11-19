@@ -127,7 +127,35 @@
       </div>
       <div class="status-icon">🛋️</div>
       <h2 class="status-title">¡Ya estás en el Sofá!</h2>
-      <p class="status-desc">Mira tu televisor: ¡tu personaje familiar ya está sentado en el sofá con los demás!</p>
+      <p class="status-desc">Tu personaje familiar ya está sentado en el sofá en el televisor.</p>
+
+      <!-- Ruta de Maestría Familiar -->
+      <div class="mastery-box">
+        <div class="mastery-title">🗺️ Tu Ruta de Aprendizaje Familiar:</div>
+        <div class="mastery-steps">
+          <div class="mastery-step active" id="mStepCol">
+            <span class="m-step-icon">🇨🇴</span>
+            <span class="m-step-text">Colombia</span>
+            <span class="m-step-badge" id="mBadgeCol">⭐ Nivel 1</span>
+          </div>
+          <div class="m-arrow">➔</div>
+          <div class="mastery-step" id="mStepSur">
+            <span class="m-step-icon">🌎</span>
+            <span class="m-step-text">Suramérica</span>
+            <span class="m-step-badge" id="mBadgeSur">🔒 Bloqueado</span>
+          </div>
+          <div class="m-arrow">➔</div>
+          <div class="mastery-step" id="mStepMun">
+            <span class="m-step-icon">🌍</span>
+            <span class="m-step-text">El Mundo</span>
+            <span class="m-step-badge" id="mBadgeMun">🔒 Bloqueado</span>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" id="btnChangeRoom" class="btn-change-room">
+        🚪 Cambiar o Salir de Sala
+      </button>
     </div>
   </main>
 
@@ -168,22 +196,22 @@
 
     <div class="mobile-buttons-grid">
       <button class="pad-btn pad-0" data-idx="0">
-        <span class="pad-shape">▲</span>
+        <span class="pad-badge">A</span>
         <span class="pad-text" id="mOptText0">Opción A</span>
       </button>
 
       <button class="pad-btn pad-1" data-idx="1">
-        <span class="pad-shape">◆</span>
+        <span class="pad-badge">B</span>
         <span class="pad-text" id="mOptText1">Opción B</span>
       </button>
 
       <button class="pad-btn pad-2" data-idx="2">
-        <span class="pad-shape">●</span>
+        <span class="pad-badge">C</span>
         <span class="pad-text" id="mOptText2">Opción C</span>
       </button>
 
       <button class="pad-btn pad-3" data-idx="3">
-        <span class="pad-shape">■</span>
+        <span class="pad-badge">D</span>
         <span class="pad-text" id="mOptText3">Opción D</span>
       </button>
     </div>

@@ -17,6 +17,69 @@ let selectedRoleIcon = '👨‍💼';
 let myTotalScore = 0;
 let mqttClient = null;
 
+// Progreso de Maestría Familiar ("Ruta del Saber")
+let masteryPoints = parseInt(localStorage.getItem('desdeelsofa_mastery_pts') || '0', 10);
+
+function getMasteryInfo() {
+  if (masteryPoints >= 6) {
+    return { level: 3, title: '🌍 Maestro Global', badge: '👑 Maestro' };
+  } else if (masteryPoints >= 3) {
+    return { level: 2, title: '🌎 Experto Suramérica', badge: '⭐ Nvl 2' };
+  } else {
+    return { level: 1, title: '🇨🇴 Explorador Colombia', badge: '⭐ Nvl 1' };
+  }
+}
+
+function updateMasteryUI() {
+  const info = getMasteryInfo();
+  const mStepCol = document.getElementById('mStepCol');
+  const mStepSur = document.getElementById('mStepSur');
+  const mStepMun = document.getElementById('mStepMun');
+  const mBadgeCol = document.getElementById('mBadgeCol');
+  const mBadgeSur = document.getElementById('mBadgeSur');
+  const mBadgeMun = document.getElementById('mBadgeMun');
+
+  if (mStepCol && mBadgeCol) {
+    if (info.level >= 2) {
+      mStepCol.className = 'mastery-step';
+      mBadgeCol.textContent = '✅ Superado';
+      mBadgeCol.style.color = '#4ade80';
+    } else {
+      mStepCol.className = 'mastery-step active';
+      mBadgeCol.textContent = '⭐ En curso';
+      mBadgeCol.style.color = '#fde047';
+    }
+  }
+
+  if (mStepSur && mBadgeSur) {
+    if (info.level === 2) {
+      mStepSur.className = 'mastery-step active';
+      mBadgeSur.textContent = '⭐ En curso';
+      mBadgeSur.style.color = '#fde047';
+    } else if (info.level >= 3) {
+      mStepSur.className = 'mastery-step';
+      mBadgeSur.textContent = '✅ Superado';
+      mBadgeSur.style.color = '#4ade80';
+    } else {
+      mStepSur.className = 'mastery-step';
+      mBadgeSur.textContent = '🔒 Bloqueado';
+      mBadgeSur.style.color = '#94a3b8';
+    }
+  }
+
+  if (mStepMun && mBadgeMun) {
+    if (info.level >= 3) {
+      mStepMun.className = 'mastery-step active';
+      mBadgeMun.textContent = '👑 Maestro';
+      mBadgeMun.style.color = '#fde047';
+    } else {
+      mStepMun.className = 'mastery-step';
+      mBadgeMun.textContent = '🔒 Bloqueado';
+      mBadgeMun.style.color = '#94a3b8';
+    }
+  }
+}
+
 let topicTvToPhone = '';
 let topicPhoneToTv = '';
 
@@ -160,18 +223,22 @@ function connectMqttAndJoin() {
       joinErrorMessage.textContent = '';
       mqttClient.subscribe(topicTvToPhone, { qos: 1 });
 
-      // Enviar registro con datos de rol familiar y nombre para sentarse en el sofá
+      // Enviar registro con datos de rol familiar, maestría y nombre para sentarse en el sofá
+      const mastery = getMasteryInfo();
       publishToTv({
         type: 'JOIN',
         id: myPlayerId,
         name: myName,
         role: selectedRole,
         roleTitle: selectedRoleTitle,
-        roleIcon: selectedRoleIcon
+        roleIcon: selectedRoleIcon,
+        masteryBadge: mastery.badge,
+        masteryLevel: mastery.level
       });
 
       if (myDisplayName) myDisplayName.textContent = `${selectedRoleTitle}: ${myName}`;
       if (myRoleIcon) myRoleIcon.textContent = selectedRoleIcon;
+      updateMasteryUI();
       showScreen('waiting');
       vibrate(50);
     },
@@ -252,6 +319,9 @@ function handleTvMessage(data) {
       if (resultTotalScore) resultTotalScore.textContent = myTotalScore.toLocaleString();
 
       if (data.isCorrect) {
+        masteryPoints++;
+        localStorage.setItem('desdeelsofa_mastery_pts', masteryPoints.toString());
+        updateMasteryUI();
         vibrate([60, 60, 100]);
         if (resultCard) resultCard.className = 'result-card correct';
         if (resultIcon) resultIcon.textContent = '🎉';
@@ -275,6 +345,21 @@ function handleTvMessage(data) {
     vibrate([100, 50, 100, 50, 200]);
     showScreen('gameover');
   }
+}
+
+// Botón Cambiar / Salir de Sala
+const btnChangeRoom = document.getElementById('btnChangeRoom');
+if (btnChangeRoom) {
+  btnChangeRoom.addEventListener('click', () => {
+    if (mqttClient) {
+      try { mqttClient.disconnect(); } catch (e) {}
+      mqttClient = null;
+    }
+    roomCode = '';
+    roomCodeInput.value = '';
+    showScreen('join');
+    roomCodeInput.focus();
+  });
 }
 
 // Botones de respuesta en pantalla táctil
