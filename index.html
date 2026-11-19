@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Desde el Sofá - Control Familiar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="play.css">
+  <script src="mqttws31.min.js"></script>
+</head>
+<body class="mobile-body">
+
+  <!-- SCREEN 1: REGISTRO FAMILIAR -->
+  <main id="screenJoin" class="mobile-screen active">
+    <div class="reg-card">
+      <div class="brand-header">
+        <div class="brand-sofa-icon">🛋️</div>
+        <h1 class="brand-title">Desde el Sofá</h1>
+        <p class="brand-subtitle">¡Siéntate en el sofá y juega en familia!</p>
+      </div>
+
+      <form id="joinForm">
+        <div class="form-group">
+          <label class="form-label" for="roomCodeInput">Código de Sala (En tu TV):</label>
+          <input type="text" id="roomCodeInput" class="text-input" maxlength="6" placeholder="EJ: SOFA" required autofocus autocomplete="off" autocapitalize="characters">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="playerNameInput">Tu Nombre o Apodo:</label>
+          <input type="text" id="playerNameInput" class="text-input" maxlength="15" placeholder="Ej: Pipe, Mamá, Tío Carlos..." required autocomplete="off">
+        </div>
+
+        <!-- Selector de Edad -->
+        <div class="form-group">
+          <label class="form-label">¿Quién eres en la familia?</label>
+          <div class="segmented-grid grid-4" id="agePicker">
+            <button type="button" class="seg-btn" data-age="kid">👦 Niño/a (6-12)</button>
+            <button type="button" class="seg-btn" data-age="teen">🎧 Joven (13-25)</button>
+            <button type="button" class="seg-btn selected" data-age="adult">👔 Adulto (26-55)</button>
+            <button type="button" class="seg-btn" data-age="senior">👓 Abuelo/a (56+)</button>
+          </div>
+        </div>
+
+        <!-- Selector de Género -->
+        <div class="form-group">
+          <label class="form-label">Género:</label>
+          <div class="segmented-grid" id="genderPicker">
+            <button type="button" class="seg-btn selected" data-gender="male">👨 Masculino</button>
+            <button type="button" class="seg-btn" data-gender="female">👩 Femenino</button>
+          </div>
+        </div>
+
+        <div id="joinErrorMessage" class="error-banner"></div>
+
+        <button type="submit" id="btnJoin" class="btn-sit-on-sofa">
+          🛋️ ¡Sentarme en el Sofá!
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- SCREEN 2: ESPERANDO EN EL SOFÁ (LOBBY) -->
+  <main id="screenWaiting" class="mobile-screen">
+    <div class="status-card">
+      <div class="avatar-badge">
+        <span id="myCharIcon">👨</span>
+        <span id="myDisplayName">Jugador</span>
+      </div>
+      <div class="status-icon">🛋️</div>
+      <h2 class="status-title">¡Ya estás en el Sofá!</h2>
+      <p class="status-desc">Mira la pantalla de tu televisor: ¡tu personaje ya está sentado en el sofá esperando a los demás!</p>
+    </div>
+  </main>
+
+  <!-- SCREEN 3: ESPECTADOR (CUANDO OTRO JUGADOR TIENE EL TURNO) -->
+  <main id="screenSpectating" class="mobile-screen">
+    <div class="status-card turn-spectating-card">
+      <div class="status-icon">👀</div>
+      <p style="color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Turno activo de:</p>
+      <div class="active-turn-player-name" id="spectatingPlayerName">Tío Carlos</div>
+      <p class="status-desc">¡Atento a la pantalla del TV! Ayúdale o mira si acierta su pregunta.</p>
+    </div>
+  </main>
+
+  <!-- SCREEN 4: PREPÁRATE (ALERT CUANDO ES TU TURNO) -->
+  <main id="screenPrepare" class="mobile-screen">
+    <div class="status-card" style="border-top: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.15);">
+      <div class="status-icon" style="animation: pulse 1s infinite alternate;">⚡</div>
+      <h2 class="status-title" style="color: #fde047;">¡PREPÁRATE!</h2>
+      <div class="active-turn-player-name" id="preparePlayerName">Pipe</div>
+      <p class="status-desc">¡Es tu turno de responder en el sofá! La pregunta aparece en segundos...</p>
+    </div>
+  </main>
+
+  <!-- SCREEN 5: GAMEPAD (CUANDO ES TU TURNO DE RESPONDER) -->
+  <main id="screenGamepad" class="mobile-screen">
+    <div class="turn-alert-banner">
+      ⚡ ¡ES TU TURNO! RESPONDE ABAJO ⚡
+    </div>
+
+    <div class="gamepad-header">
+      <div class="mini-score">Mis Puntos: <strong id="myScore">0</strong></div>
+      <div class="mini-score" style="color:#f59e0b;" id="myTurnProgress">Pregunta 1 de 2</div>
+    </div>
+
+    <div class="gamepad-question" id="mobileQuestionTitle">
+      ¿Pregunta?
+    </div>
+
+    <div class="mobile-buttons-grid">
+      <button class="pad-btn pad-0" data-idx="0">
+        <span class="pad-shape">▲</span>
+        <span class="pad-text" id="mOptText0">Opción A</span>
+      </button>
+
+      <button class="pad-btn pad-1" data-idx="1">
+        <span class="pad-shape">◆</span>
+        <span class="pad-text" id="mOptText1">Opción B</span>
+      </button>
+
+      <button class="pad-btn pad-2" data-idx="2">
+        <span class="pad-shape">●</span>
+        <span class="pad-text" id="mOptText2">Opción C</span>
+      </button>
+
+      <button class="pad-btn pad-3" data-idx="3">
+        <span class="pad-shape">■</span>
+        <span class="pad-text" id="mOptText3">Opción D</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- SCREEN 6: RESPUESTA ENVIADA -->
+  <main id="screenSubmitted" class="mobile-screen">
+    <div class="status-card">
+      <div class="status-icon">⏳</div>
+      <h2 class="status-title">¡Respuesta Enviada!</h2>
+      <p class="status-desc">Observa el televisor para ver si acertaste...</p>
+    </div>
+  </main>
+
+  <!-- SCREEN 7: RESULTADO RÁPIDO (ACIERTO O FALLO) -->
+  <main id="screenResult" class="mobile-screen">
+    <div class="result-card" id="resultCard">
+      <div class="result-icon" id="resultIcon">🎉</div>
+      <h2 class="result-title" id="resultTitle">¡Correcto!</h2>
+      <p class="result-points" id="resultPoints">+850 pts</p>
+      <div style="font-size:1.1rem; color:#e2e8f0; margin-top:8px;">Puntaje Total: <strong id="resultTotalScore" style="color:#fde047; font-size:1.3rem;">0</strong></div>
+    </div>
+  </main>
+
+  <!-- SCREEN 8: FIN DE LA PARTIDA -->
+  <main id="screenGameOver" class="mobile-screen">
+    <div class="status-card">
+      <div class="status-icon">🏆</div>
+      <h2 class="status-title">¡Partida Terminada!</h2>
+      <p class="status-desc">¡Mira el podio final en el televisor!</p>
+      <div style="margin-top:20px; font-size:1.4rem; color:#fde047; font-weight:800;">
+        Puntaje Final: <span id="finalScoreVal">0</span> pts
+      </div>
+    </div>
+  </main>
+
+  <script src="play.js"></script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+/* ============================================================
+   DESDE EL SOFÁ - ESTILOS MÓVIL
+   Estética Cálida de Sala Familiar Colombiana
+   ============================================================ */
+
+:root {
+  --sofa-gold: #f59e0b;
+  --sofa-wood: #78350f;
+  --bg-dark: #090e1a;
+  --card-bg: rgba(30, 41, 59, 0.95);
+  --pad-0: #e11d48; /* Opción Roja */
+  --pad-1: #0284c7; /* Opción Azul */
+  --pad-2: #16a34a; /* Opción Verde */
+  --pad-3: #d97706; /* Opción Amarilla */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.mobile-body {
+  font-family: 'Outfit', sans-serif;
+  background: radial-gradient(circle at 50% 10%, #1e1b4b 0%, #0f172a 70%, #020617 100%);
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  overflow-x: hidden;
+}
+
+.mobile-screen {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.mobile-screen.active {
+  display: flex;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* SCREEN 1: REGISTRO FAMILIAR */
+.reg-card {
+  background: var(--card-bg);
+  border: 2px solid rgba(251, 191, 36, 0.3);
+  border-radius: 26px;
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+}
+
+.brand-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.brand-sofa-icon {
+  font-size: 3rem;
+  margin-bottom: 6px;
+  animation: floatSofa 3s infinite ease-in-out;
+}
+
+@keyframes floatSofa {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.brand-title {
+  font-family: 'Fredoka', cursive;
+  font-size: 2.2rem;
+  background: linear-gradient(90deg, #fde047, #38bdf8, #f43f5e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+
+.brand-subtitle {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+
+.text-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid #334155;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.text-input:focus {
+  border-color: #f59e0b;
+}
+
+#roomCodeInput {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-family: 'Fredoka', cursive;
+  font-size: 1.5rem;
+  text-align: center;
+  color: #fde047;
+}
+
+/* Segmented selector buttons (Age & Gender) */
+.segmented-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.grid-4 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.seg-btn {
+  background: #1e293b;
+  border: 2px solid #334155;
+  color: #e2e8f0;
+  padding: 10px 8px;
+  border-radius: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.seg-btn.selected {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.2);
+  color: #fde047;
+  transform: scale(1.02);
+}
+
+.btn-sit-on-sofa {
+  width: 100%;
+  margin-top: 10px;
+  padding: 16px;
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+  color: #ffffff;
+  border: none;
+  border-radius: 16px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+  transition: transform 0.15s;
+}
+
+.btn-sit-on-sofa:active {
+  transform: scale(0.97);
+}
+
+.error-banner {
+  color: #f87171;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 12px;
+  min-height: 20px;
+}
+
+/* SCREEN 2: WAITING / SPECTATING */
+.status-card {
+  text-align: center;
+  padding: 28px 20px;
+  max-width: 400px;
+  background: var(--card-bg);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.avatar-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 20px;
+  border-radius: 999px;
+  margin-bottom: 24px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fde047;
+}
+
+.status-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+}
+
+.status-title {
+  font-family: 'Fredoka', cursive;
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.status-desc {
+  font-size: 1.15rem;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+/* TURN NOTICE BANNER (Cuando es el turno de otro jugador) */
+.turn-spectating-card {
+  border-top: 4px solid #38bdf8;
+}
+
+.active-turn-player-name {
+  font-family: 'Fredoka', cursive;
+  font-size: 1.8rem;
+  color: #38bdf8;
+  margin-bottom: 10px;
+}
+
+/* SCREEN 3: GAMEPAD (CUANDO ES TU TURNO) */
+#mobileGamepadScreen {
+  justify-content: space-between;
+  padding-bottom: 8px;
+}
+
+.turn-alert-banner {
+  width: 100%;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+  color: #0f172a;
+  font-weight: 900;
+  font-size: 1.1rem;
+  padding: 8px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 8px;
+  animation: pulseTurn 1s infinite alternate;
+}
+
+@keyframes pulseTurn {
+  from { opacity: 0.9; transform: scale(0.99); }
+  to { opacity: 1; transform: scale(1.01); }
+}
+
+.gamepad-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.mini-score {
+  font-size: 1.1rem;
+  color: #cbd5e1;
+}
+
+.mini-score strong {
+  color: #fde047;
+}
+
+.gamepad-question {
+  width: 100%;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  line-height: 1.35;
+}
+
+.mobile-buttons-grid {
+  width: 100%;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  min-height: 52vh;
+}
+
+.pad-btn {
+  border: none;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  transition: transform 0.1s, filter 0.1s;
+  padding: 12px;
+}
+
+.pad-btn:active {
+  transform: scale(0.93);
+  filter: brightness(1.25);
+}
+
+.pad-0 { background: var(--pad-0); }
+.pad-1 { background: var(--pad-1); }
+.pad-2 { background: var(--pad-2); }
+.pad-3 { background: var(--pad-3); }
+
+.pad-shape {
+  font-size: 2.8rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pad-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* SCREEN 5: RESULTADO RÁPIDO */
+.result-card {
+  text-align: center;
+  padding: 32px 24px;
+  border-radius: 28px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.result-card.correct {
+  background: linear-gradient(135deg, #15803d, #16a34a);
+}
+
+.result-card.wrong {
+  background: linear-gradient(135deg, #991b1b, #dc2626);
+}
+
+.result-icon { font-size: 4rem; margin-bottom: 8px; }
+.result-title { font-family: 'Fredoka', cursive; font-size: 2.4rem; margin-bottom: 6px; }
+.result-points { font-family: 'Fredoka', cursive; font-size: 2rem; color: #fde047; }
