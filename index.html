@@ -7,16 +7,48 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="play.css">
   <script src="mqttws31.min.js"></script>
+  <style>
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .role-btn {
+      background: #1e293b;
+      border: 2px solid #334155;
+      color: #e2e8f0;
+      padding: 10px 4px;
+      border-radius: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .role-btn-icon {
+      font-size: 1.8rem;
+    }
+    .role-btn.selected {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.25);
+      color: #fde047;
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body class="mobile-body">
 
-  <!-- SCREEN 1: REGISTRO FAMILIAR -->
+  <!-- SCREEN 1: REGISTRO FAMILIAR POR ROLES -->
   <main id="screenJoin" class="mobile-screen active">
     <div class="reg-card">
       <div class="brand-header">
         <div class="brand-sofa-icon">🛋️</div>
         <h1 class="brand-title">Desde el Sofá</h1>
-        <p class="brand-subtitle">¡Siéntate en el sofá y juega en familia!</p>
+        <p class="brand-subtitle">¡Siéntate con tu familia a jugar!</p>
       </div>
 
       <form id="joinForm">
@@ -27,26 +59,45 @@
 
         <div class="form-group">
           <label class="form-label" for="playerNameInput">Tu Nombre o Apodo:</label>
-          <input type="text" id="playerNameInput" class="text-input" maxlength="15" placeholder="Ej: Pipe, Mamá, Tío Carlos..." required autocomplete="off">
+          <input type="text" id="playerNameInput" class="text-input" maxlength="15" placeholder="Ej: Oscar, Gloria, Pipe..." required autocomplete="off">
         </div>
 
-        <!-- Selector de Edad -->
+        <!-- Selector de Roles Familiares -->
         <div class="form-group">
-          <label class="form-label">¿Quién eres en la familia?</label>
-          <div class="segmented-grid grid-4" id="agePicker">
-            <button type="button" class="seg-btn" data-age="kid">👦 Niño/a (6-12)</button>
-            <button type="button" class="seg-btn" data-age="teen">🎧 Joven (13-25)</button>
-            <button type="button" class="seg-btn selected" data-age="adult">👔 Adulto (26-55)</button>
-            <button type="button" class="seg-btn" data-age="senior">👓 Abuelo/a (56+)</button>
-          </div>
-        </div>
-
-        <!-- Selector de Género -->
-        <div class="form-group">
-          <label class="form-label">Género:</label>
-          <div class="segmented-grid" id="genderPicker">
-            <button type="button" class="seg-btn selected" data-gender="male">👨 Masculino</button>
-            <button type="button" class="seg-btn" data-gender="female">👩 Femenino</button>
+          <label class="form-label">¿Qué rol tienes en la familia?</label>
+          <div class="roles-grid" id="rolesPicker">
+            <button type="button" class="role-btn selected" data-role="papa" data-title="Papá" data-icon="👨‍💼">
+              <span class="role-btn-icon">👨‍💼</span>
+              <span>Papá</span>
+            </button>
+            <button type="button" class="role-btn" data-role="mama" data-title="Mamá" data-icon="👩‍💼">
+              <span class="role-btn-icon">👩‍💼</span>
+              <span>Mamá</span>
+            </button>
+            <button type="button" class="role-btn" data-role="hijo" data-title="Hijo" data-icon="👦">
+              <span class="role-btn-icon">👦</span>
+              <span>Hijo</span>
+            </button>
+            <button type="button" class="role-btn" data-role="hija" data-title="Hija" data-icon="👧">
+              <span class="role-btn-icon">👧</span>
+              <span>Hija</span>
+            </button>
+            <button type="button" class="role-btn" data-role="tio" data-title="Tío" data-icon="🧔">
+              <span class="role-btn-icon">🧔</span>
+              <span>Tío</span>
+            </button>
+            <button type="button" class="role-btn" data-role="tia" data-title="Tía" data-icon="👩‍🦰">
+              <span class="role-btn-icon">👩‍🦰</span>
+              <span>Tía</span>
+            </button>
+            <button type="button" class="role-btn" data-role="abuelo" data-title="Abuelo" data-icon="👴">
+              <span class="role-btn-icon">👴</span>
+              <span>Abuelo</span>
+            </button>
+            <button type="button" class="role-btn" data-role="abuela" data-title="Abuela" data-icon="👵">
+              <span class="role-btn-icon">👵</span>
+              <span>Abuela</span>
+            </button>
           </div>
         </div>
 
@@ -63,22 +114,22 @@
   <main id="screenWaiting" class="mobile-screen">
     <div class="status-card">
       <div class="avatar-badge">
-        <span id="myCharIcon">👨</span>
-        <span id="myDisplayName">Jugador</span>
+        <span id="myRoleIcon">👨‍💼</span>
+        <span id="myDisplayName">Papá: Oscar</span>
       </div>
       <div class="status-icon">🛋️</div>
       <h2 class="status-title">¡Ya estás en el Sofá!</h2>
-      <p class="status-desc">Mira la pantalla de tu televisor: ¡tu personaje ya está sentado en el sofá esperando a los demás!</p>
+      <p class="status-desc">Mira tu televisor: ¡tu personaje familiar ya está sentado en el sofá con los demás!</p>
     </div>
   </main>
 
-  <!-- SCREEN 3: ESPECTADOR (CUANDO OTRO JUGADOR TIENE EL TURNO) -->
+  <!-- SCREEN 3: ESPECTADOR (TURNO DE OTRO FAMILIAR) -->
   <main id="screenSpectating" class="mobile-screen">
     <div class="status-card turn-spectating-card">
       <div class="status-icon">👀</div>
       <p style="color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Turno activo de:</p>
-      <div class="active-turn-player-name" id="spectatingPlayerName">Tío Carlos</div>
-      <p class="status-desc">¡Atento a la pantalla del TV! Ayúdale o mira si acierta su pregunta.</p>
+      <div class="active-turn-player-name" id="spectatingPlayerName">Mamá: Gloria</div>
+      <p class="status-desc">¡Atento a la pantalla del TV! Mira cómo responde desde el sofá.</p>
     </div>
   </main>
 
@@ -87,7 +138,7 @@
     <div class="status-card" style="border-top: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.15);">
       <div class="status-icon" style="animation: pulse 1s infinite alternate;">⚡</div>
       <h2 class="status-title" style="color: #fde047;">¡PREPÁRATE!</h2>
-      <div class="active-turn-player-name" id="preparePlayerName">Pipe</div>
+      <div class="active-turn-player-name" id="preparePlayerName">Papá: Oscar</div>
       <p class="status-desc">¡Es tu turno de responder en el sofá! La pregunta aparece en segundos...</p>
     </div>
   </main>
@@ -139,7 +190,7 @@
     </div>
   </main>
 
-  <!-- SCREEN 7: RESULTADO RÁPIDO (ACIERTO O FALLO) -->
+  <!-- SCREEN 7: RESULTADO RÁPIDO -->
   <main id="screenResult" class="mobile-screen">
     <div class="result-card" id="resultCard">
       <div class="result-icon" id="resultIcon">🎉</div>
@@ -154,7 +205,7 @@
     <div class="status-card">
       <div class="status-icon">🏆</div>
       <h2 class="status-title">¡Partida Terminada!</h2>
-      <p class="status-desc">¡Mira el podio final en el televisor!</p>
+      <p class="status-desc">¡Mira el podio final y el ranking histórico en la TV!</p>
       <div style="margin-top:20px; font-size:1.4rem; color:#fde047; font-weight:800;">
         Puntaje Final: <span id="finalScoreVal">0</span> pts
       </div>

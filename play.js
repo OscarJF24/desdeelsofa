@@ -1,5 +1,5 @@
 // ============================================================
-// DESDE EL SOFÁ - CONTROLADOR MÓVIL POR TURNOS
+// DESDE EL SOFÁ - CONTROLADOR MÓVIL POR ROLES FAMILIARES
 // ============================================================
 
 const BROKERS = [
@@ -11,8 +11,9 @@ let currentBrokerIndex = 0;
 let myPlayerId = 'p_' + Math.random().toString(16).substring(2, 10);
 let roomCode = '';
 let myName = '';
-let myAgeGroup = 'adult';
-let myGender = 'male';
+let selectedRole = 'papa';
+let selectedRoleTitle = 'Papá';
+let selectedRoleIcon = '👨‍💼';
 let myTotalScore = 0;
 let mqttClient = null;
 
@@ -35,12 +36,11 @@ const screens = {
 const joinForm = document.getElementById('joinForm');
 const roomCodeInput = document.getElementById('roomCodeInput');
 const playerNameInput = document.getElementById('playerNameInput');
-const agePicker = document.getElementById('agePicker');
-const genderPicker = document.getElementById('genderPicker');
+const rolesPicker = document.getElementById('rolesPicker');
 const joinErrorMessage = document.getElementById('joinErrorMessage');
 
 // Waiting DOM
-const myCharIcon = document.getElementById('myCharIcon');
+const myRoleIcon = document.getElementById('myRoleIcon');
 const myDisplayName = document.getElementById('myDisplayName');
 
 // Turn DOM
@@ -77,25 +77,19 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Age button selector
-agePicker.querySelectorAll('.seg-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    agePicker.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    myAgeGroup = btn.getAttribute('data-age');
-    vibrate(20);
+// Roles selector
+if (rolesPicker) {
+  rolesPicker.querySelectorAll('.role-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      rolesPicker.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedRole = btn.getAttribute('data-role') || 'papa';
+      selectedRoleTitle = btn.getAttribute('data-title') || 'Papá';
+      selectedRoleIcon = btn.getAttribute('data-icon') || '👨‍💼';
+      vibrate(20);
+    });
   });
-});
-
-// Gender button selector
-genderPicker.querySelectorAll('.seg-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    genderPicker.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    myGender = btn.getAttribute('data-gender');
-    vibrate(20);
-  });
-});
+}
 
 function vibrate(pattern = 40) {
   if (navigator.vibrate) {
@@ -109,13 +103,6 @@ function showScreen(key) {
       screens[k].classList.toggle('active', k === key);
     }
   });
-}
-
-function getCharacterEmoji(age, gender) {
-  if (age === 'kid') return gender === 'female' ? '👧' : '👦';
-  if (age === 'teen') return gender === 'female' ? '👱‍♀️' : '🧑';
-  if (age === 'adult') return gender === 'female' ? '👩' : '👨';
-  return gender === 'female' ? '👵' : '👴';
 }
 
 // ------------------------------------------------------------
@@ -173,17 +160,18 @@ function connectMqttAndJoin() {
       joinErrorMessage.textContent = '';
       mqttClient.subscribe(topicTvToPhone, { qos: 1 });
 
-      // Enviar registro con datos de edad y género para sentarse en el sofá
+      // Enviar registro con datos de rol familiar y nombre para sentarse en el sofá
       publishToTv({
         type: 'JOIN',
         id: myPlayerId,
         name: myName,
-        ageGroup: myAgeGroup,
-        gender: myGender
+        role: selectedRole,
+        roleTitle: selectedRoleTitle,
+        roleIcon: selectedRoleIcon
       });
 
-      myDisplayName.textContent = myName;
-      myCharIcon.textContent = getCharacterEmoji(myAgeGroup, myGender);
+      if (myDisplayName) myDisplayName.textContent = `${selectedRoleTitle}: ${myName}`;
+      if (myRoleIcon) myRoleIcon.textContent = selectedRoleIcon;
       showScreen('waiting');
       vibrate(50);
     },
@@ -214,11 +202,15 @@ function handleTvMessage(data) {
     const isMyTurn = (data.activePlayerId === myPlayerId || data.mode === 'ALL');
 
     if (isMyTurn) {
-      preparePlayerName.textContent = myName;
+      if (preparePlayerName) {
+        preparePlayerName.textContent = data.activePlayerName || `${selectedRoleTitle}: ${myName}`;
+      }
       showScreen('prepare');
       vibrate([80, 50, 150]);
     } else {
-      spectatingPlayerName.textContent = data.activePlayerName || 'Familiar';
+      if (spectatingPlayerName) {
+        spectatingPlayerName.textContent = data.activePlayerName || 'Familiar';
+      }
       showScreen('spectating');
     }
   }
@@ -229,9 +221,9 @@ function handleTvMessage(data) {
 
     if (isMyTurn) {
       vibrate([40, 60, 40]);
-      mobileQuestionTitle.textContent = data.question;
-      myScore.textContent = myTotalScore.toLocaleString();
-      myTurnProgress.textContent = data.turnProgressText || '';
+      if (mobileQuestionTitle) mobileQuestionTitle.textContent = data.question;
+      if (myScore) myScore.textContent = myTotalScore.toLocaleString();
+      if (myTurnProgress) myTurnProgress.textContent = data.turnProgressText || '';
 
       data.options.forEach((opt, idx) => {
         if (mOptTexts[idx]) mOptTexts[idx].textContent = opt;
@@ -244,7 +236,9 @@ function handleTvMessage(data) {
 
       showScreen('gamepad');
     } else {
-      spectatingPlayerName.textContent = data.activePlayerName || 'Familiar';
+      if (spectatingPlayerName) {
+        spectatingPlayerName.textContent = data.activePlayerName || 'Familiar';
+      }
       showScreen('spectating');
     }
   }
@@ -252,24 +246,23 @@ function handleTvMessage(data) {
   // REVELACIÓN RÁPIDA DE RESPUESTA
   else if (data.type === 'REVEAL') {
     if (data.activePlayerId === myPlayerId || data.mode === 'ALL') {
-      const isCorrect = (data.correctIndex === data.playerAnswer);
       if (data.playerId && data.playerId !== myPlayerId) return;
 
       myTotalScore = data.totalScore !== undefined ? data.totalScore : myTotalScore;
-      resultTotalScore.textContent = myTotalScore.toLocaleString();
+      if (resultTotalScore) resultTotalScore.textContent = myTotalScore.toLocaleString();
 
       if (data.isCorrect) {
         vibrate([60, 60, 100]);
-        resultCard.className = 'result-card correct';
-        resultIcon.textContent = '🎉';
-        resultTitle.textContent = '¡Correcto!';
-        resultPoints.textContent = `+${data.pointsEarned || 500} pts`;
+        if (resultCard) resultCard.className = 'result-card correct';
+        if (resultIcon) resultIcon.textContent = '🎉';
+        if (resultTitle) resultTitle.textContent = '¡Correcto!';
+        if (resultPoints) resultPoints.textContent = `+${data.pointsEarned || 500} pts`;
       } else {
         vibrate(140);
-        resultCard.className = 'result-card wrong';
-        resultIcon.textContent = '❌';
-        resultTitle.textContent = '¡Fallaste!';
-        resultPoints.textContent = '+0 pts';
+        if (resultCard) resultCard.className = 'result-card wrong';
+        if (resultIcon) resultIcon.textContent = '❌';
+        if (resultTitle) resultTitle.textContent = '¡Fallaste!';
+        if (resultPoints) resultPoints.textContent = '+0 pts';
       }
 
       showScreen('result');
@@ -278,7 +271,7 @@ function handleTvMessage(data) {
 
   // FIN DE LA PARTIDA
   else if (data.type === 'GAME_OVER') {
-    finalScoreVal.textContent = myTotalScore.toLocaleString();
+    if (finalScoreVal) finalScoreVal.textContent = myTotalScore.toLocaleString();
     vibrate([100, 50, 100, 50, 200]);
     showScreen('gameover');
   }
